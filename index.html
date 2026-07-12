@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bali Scuba - Your Bali Diving Adventure Starts Here</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, Roboto, sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f9ff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0891b2;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0e7490;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        nav.scrolled {
+            box-shadow: 0 4px 20px rgba(8, 47, 73, 0.08);
+        }
+
+        .nav-link {
+            position: relative;
+            color: #475569;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link.active {
+            color: #0891b2;
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0891b2;
+            border-radius: 2px;
+        }
+
+        /* Hero slideshow */
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        /* Glassmorphism booking widget */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 35px rgba(8, 47, 73, 0.12);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+        }
+
+        .stage-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            background: #ecfeff;
+            color: #0891b2;
+            font-weight: 700;
+            border: 1px solid #a5f3fc;
+        }
+
+        @media (max-width: 768px) {
+            .hero-booking-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Navigation -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md transition-shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#hero" class="text-xl sm:text-2xl font-extrabold tracking-tight text-cyan-700">
+                    BALI <span class="text-slate-900">SCUBA</span>
+                </a>
+                <div id="nav-menu" class="hidden lg:flex gap-7">
+                    <a href="#hero" class="nav-link active text-sm font-medium">Home</a>
+                    <a href="#about" class="nav-link text-sm font-medium">About</a>
+                    <a href="#dive-trips" class="nav-link text-sm font-medium">Dive Trips</a>
+                    <a href="#courses" class="nav-link text-sm font-medium">Courses</a>
+                    <a href="#pricing" class="nav-link text-sm font-medium">Pricing</a>
+                    <a href="#reviews" class="nav-link text-sm font-medium">Reviews</a>
+                    <a href="#contact" class="nav-link text-sm font-medium">Contact</a>
+                </div>
+                <a href="#booking" class="hidden lg:inline-block px-5 py-2.5 btn-primary text-white rounded-full font-semibold text-sm shadow-lg shadow-cyan-900/10">
+                    예약하기
+                </a>
+                <button id="hamburger" class="lg:hidden text-slate-700 text-2xl">
+                    <span>&#9776;</span>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden lg:hidden mt-4 pb-4">
+                <div class="flex flex-col gap-3">
+                    <a href="#hero" class="nav-link text-sm font-medium block">Home</a>
+                    <a href="#about" class="nav-link text-sm font-medium block">About</a>
+                    <a href="#dive-trips" class="nav-link text-sm font-medium block">Dive Trips</a>
+                    <a href="#courses" class="nav-link text-sm font-medium block">Courses</a>
+                    <a href="#pricing" class="nav-link text-sm font-medium block">Pricing</a>
+                    <a href="#reviews" class="nav-link text-sm font-medium block">Reviews</a>
+                    <a href="#contact" class="nav-link text-sm font-medium block">Contact</a>
+                    <a href="#booking" class="mt-2 px-5 py-3 btn-primary text-white rounded-full font-semibold text-sm text-center">예약하기</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex flex-col justify-center overflow-hidden">
+        <!-- Slideshow background -->
+        <div class="absolute inset-0">
+            <div class="hero-slide active" style="background-image: url('assets/images/hero-1.png');"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/hero-2.png');"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/hero-3.png');"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/hero-4.png');"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/hero-5.png');"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/40 to-slate-900/80"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-32 pb-12 flex-1 flex flex-col justify-center">
+            <div class="max-w-2xl">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-cyan-100 text-xs sm:text-sm font-semibold mb-5 border border-white/20">
+                    PADI 5 Star Dive Centre &middot; CDC
+                </span>
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[1.05] mb-5">
+                    Your Bali Diving<br>Adventure Starts Here
+                </h1>
+                <p class="text-base sm:text-xl text-slate-200 leading-relaxed">
+                    20년 경력 &middot; 100% 안전 기록의 PADI 5 Star 다이빙 센터, Bali Scuba
+                </p>
+            </div>
+        </div>
+
+        <!-- Floating booking widget -->
+        <div class="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14">
+            <form id="hero-booking-form" class="glass-card rounded-2xl sm:rounded-full shadow-2xl shadow-slate-900/30 p-4 sm:p-3 grid grid-cols-1 sm:grid-cols-[1.3fr_1fr_1fr_0.8fr_auto] hero-booking-grid gap-3 sm:items-center">
+                <div class="px-3 sm:px-4">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">Dive Trip</label>
+                    <select id="hero-trip" class="w-full bg-transparent text-slate-900 font-medium focus:outline-none text-sm sm:text-base">
+                        <option value="누사페니다">누사페니다 (Nusa Penida)</option>
+                        <option value="툴람벤">툴람벤 (Tulamben)</option>
+                        <option value="파당바이">파당바이 (Padang Bai)</option>
+                        <option value="테페꽁&밈빵">테페꽁 &amp; 밈빵 (Tepekong &amp; Mimpang)</option>
+                        <option value="아메드">아메드 (Amed)</option>
+                        <option value="사누르">사누르 (Sanur)</option>
+                        <option value="나이트다이브(툴람벤)">나이트다이브 (Tulamben)</option>
+                    </select>
+                </div>
+                <div class="px-3 sm:px-4 sm:border-l border-slate-200">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">날짜</label>
+                    <input id="hero-date" type="date" class="w-full bg-transparent text-slate-900 font-medium focus:outline-none text-sm sm:text-base">
+                </div>
+                <div class="px-3 sm:px-4 sm:border-l border-slate-200">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">시간</label>
+                    <select id="hero-time" class="w-full bg-transparent text-slate-900 font-medium focus:outline-none text-sm sm:text-base">
+                        <option value="오전">오전</option>
+                        <option value="오후">오후</option>
+                    </select>
+                </div>
+                <div class="px-3 sm:px-4 sm:border-l border-slate-200">
+                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">인원</label>
+                    <input id="hero-guests" type="number" min="1" value="2" class="w-full bg-transparent text-slate-900 font-medium focus:outline-none text-sm sm:text-base">
+                </div>
+                <button type="submit" class="btn-primary text-white font-semibold px-6 py-3 sm:py-4 rounded-full sm:rounded-full text-sm sm:text-base shadow-lg shadow-cyan-900/20 whitespace-nowrap">
+                    예약 문의
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 sm:py-24 px-4 bg-white">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12 reveal">
+                <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">Why Bali Scuba?</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">
+                    검증된 안전, 진심 어린 서비스
+                </h2>
+            </div>
+            <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto text-center mb-12 reveal">
+                Multiple award-winning PADI 5 Star CDC Dive Centre로서, 다국어 강사진과 체계적인 환경 프로그램을 바탕으로
+                초보 다이버부터 전문 다이버 과정까지 전 라이프사이클을 안전하게 책임집니다.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="reveal card-hover text-center bg-cyan-50/60 rounded-2xl p-8 border border-cyan-100">
+                    <div class="text-4xl font-extrabold text-cyan-700 mb-2">5★</div>
+                    <p class="text-slate-600 font-medium">PADI 5 Star Dive Centre &amp; CDC</p>
+                </div>
+                <div class="reveal card-hover text-center bg-cyan-50/60 rounded-2xl p-8 border border-cyan-100">
+                    <div class="text-4xl font-extrabold text-cyan-700 mb-2">20+</div>
+                    <p class="text-slate-600 font-medium">Years of Experience</p>
+                </div>
+                <div class="reveal card-hover text-center bg-cyan-50/60 rounded-2xl p-8 border border-cyan-100">
+                    <div class="text-4xl font-extrabold text-cyan-700 mb-2">100%</div>
+                    <p class="text-slate-600 font-medium">Safety Record</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dive Trips Section -->
+    <section id="dive-trips" class="py-16 sm:py-24 px-4 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 reveal">
+                <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">Where We Dive</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Dive Trips</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <a href="dive-trips/nusa-penida.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🐟</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Nusa Penida</h3>
+                    <p class="text-sm text-slate-500">Mola Mola &amp; Manta Point</p>
+                </a>
+                <a href="dive-trips/tulamben.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🚢</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Tulamben</h3>
+                    <p class="text-sm text-slate-500">USAT Liberty Shipwreck</p>
+                </a>
+                <a href="dive-trips/padang-bai.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🌊</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Padang Bai</h3>
+                    <p class="text-sm text-slate-500">Macro Photography Paradise</p>
+                </a>
+                <a href="dive-trips/tepekong-mimpang.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🦈</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Tepekong &amp; Mimpang</h3>
+                    <p class="text-sm text-slate-500">Drift Diving, Shark Point</p>
+                </a>
+                <a href="dive-trips/amed.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🪸</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Amed</h3>
+                    <p class="text-sm text-slate-500">Hidden Gem, Coral Gardens</p>
+                </a>
+                <a href="dive-trips/sanur.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🐡</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Sanur</h3>
+                    <p class="text-sm text-slate-500">Closest &amp; Most Accessible</p>
+                </a>
+                <a href="dive-trips/night-dive.html" class="reveal card-hover block bg-white rounded-2xl p-6 border border-slate-200">
+                    <div class="text-3xl mb-3">🌙</div>
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">Night Dive / Safari</h3>
+                    <p class="text-sm text-slate-500">Tulamben Night Diving</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="py-16 sm:py-24 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14 reveal">
+                <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">From First Splash to Pro</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Courses</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4">1</span>
+                    <h3 class="font-bold text-slate-900 mb-2">체험</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Discover Scuba Diving<br>PADI For Kids</p>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4">2</span>
+                    <h3 class="font-bold text-slate-900 mb-2">기초</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Scuba Diver<br>Open Water</p>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4">3</span>
+                    <h3 class="font-bold text-slate-900 mb-2">심화</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Advanced Open Water<br>Rescue Diver</p>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4">4</span>
+                    <h3 class="font-bold text-slate-900 mb-2">전문</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Nitrox<br>Deep Diver</p>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4">5</span>
+                    <h3 class="font-bold text-slate-900 mb-2">프로</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Divemaster<br>IDC</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 sm:py-24 px-4 bg-gradient-to-b from-slate-50 to-cyan-50/40">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14 reveal">
+                <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">Certified Diver Packages</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-3">Pricing</h2>
+                <p class="text-slate-500 text-sm sm:text-base">인증 다이버 기준, 장비 제외 가격</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="reveal card-hover bg-white rounded-2xl p-7 border border-slate-200 text-center">
+                    <p class="text-sm text-slate-500 mb-2">2일 · 4다이브</p>
+                    <p class="text-2xl font-extrabold text-slate-900 mb-5">IDR 3,400,000</p>
+                    <a href="#booking" class="block w-full py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-700 transition-colors">Book Now</a>
+                </div>
+                <div class="reveal card-hover bg-white rounded-2xl p-7 border-2 border-cyan-500 text-center relative">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full">인기</span>
+                    <p class="text-sm text-slate-500 mb-2">3일 · 7다이브</p>
+                    <p class="text-2xl font-extrabold text-slate-900 mb-5">IDR 6,000,000</p>
+                    <a href="#booking" class="block w-full py-3 rounded-full btn-primary text-white font-semibold text-sm">Book Now</a>
+                </div>
+                <div class="reveal card-hover bg-white rounded-2xl p-7 border border-slate-200 text-center">
+                    <p class="text-sm text-slate-500 mb-2">4일 · 10다이브</p>
+                    <p class="text-2xl font-extrabold text-slate-900 mb-5">IDR 8,200,000</p>
+                    <a href="#booking" class="block w-full py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-700 transition-colors">Book Now</a>
+                </div>
+                <div class="reveal card-hover bg-white rounded-2xl p-7 border border-slate-200 text-center">
+                    <p class="text-sm text-slate-500 mb-2">5일 · 13다이브</p>
+                    <p class="text-2xl font-extrabold text-slate-900 mb-5">IDR 10,200,000</p>
+                    <a href="#booking" class="block w-full py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-700 transition-colors">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-16 sm:py-24 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14 reveal">
+                <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">Google Reviews</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">다이버들의 이야기</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-3.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"PADI 오픈워터 교육을 받기 위해 다이빙샵을 여러 군데 알아보던 중 Bali Scuba를 발견하게 되었어요. 안전하고 체계적인 교육에 만족했습니다."</p>
+                        <p class="font-semibold text-slate-900 text-sm">백장미</p>
+                        <p class="text-xs text-slate-400">3개월 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-6.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"예약 안하고 바로 찾아가서 다이빙 가능하냐고 했는데 너무 친절하게 응대해주셨다. 픽업·드랍, 장비 케어까지 꼼꼼했고 마스터 세분이 담당해주셔서 든든했어요."</p>
+                        <p class="font-semibold text-slate-900 text-sm">김지원</p>
+                        <p class="text-xs text-slate-400">2년 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-2.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"친절하고 좋았습니다. 가이드는 친절하고 좋은 크루입니다. 위험한지 먼저 조류체크하고 안전에 신경 많이 쓰고 잘 챙겨줍니다. 만타 보는 걸로도 너무 감동적이었어요."</p>
+                        <p class="font-semibold text-slate-900 text-sm">Hyeyoung Han <span class="text-xs text-slate-400 font-normal">· 지역 가이드</span></p>
+                        <p class="text-xs text-slate-400">1년 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-1.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"몰라몰라 시즌은 아니었지만 재밌게 놀았습니다. PADI 권장 가이드라인보다 더 타이트하게 안전에 신경쓰는 모습이 보기 좋았습니다."</p>
+                        <p class="font-semibold text-slate-900 text-sm">Seungdae Lim</p>
+                        <p class="text-xs text-slate-400">6년 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-4.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★☆</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"직원들은 모두 친절하고 즐거운 다이빙 할 수 있도록 신경써 줌. 날씨와 다이빙 포인트에 대한 지형적 구조나 상황을 매우 잘 파악하고 있었음."</p>
+                        <p class="font-semibold text-slate-900 text-sm">Deokmin Jeon <span class="text-xs text-slate-400 font-normal">· 지역 가이드</span></p>
+                        <p class="text-xs text-slate-400">7년 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-5.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"영어가 부족해서 걱정했으나 5일 다이빙을 정말 즐겁게 했습니다. 혼자 한국인이었지만 불편하지 않았습니다. 2일 만타를 봐서 행복합니다."</p>
+                        <p class="font-semibold text-slate-900 text-sm">이병직 (Ben Lee)</p>
+                        <p class="text-xs text-slate-400">3년 전</p>
+                    </div>
+                </div>
+                <div class="reveal card-hover bg-slate-50 rounded-2xl overflow-hidden border border-slate-200">
+                    <img src="assets/images/reviews/review-2.png" alt="Bali Scuba dive photo" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <div class="text-amber-400 text-sm mb-3">★★★★★</div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">"2017년에 6일간 이용한 다이빙샵. 직원들이 모두 프로페셔널하고 시스템이 체계적임. 혼자 가던 단체로 가던 문제없는 대응. 다음에도 이용하고싶음."</p>
+                        <p class="font-semibold text-slate-900 text-sm">marc yoon <span class="text-xs text-slate-400 font-normal">· 지역 가이드</span></p>
+                        <p class="text-xs text-slate-400">7년 전</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="py-16 sm:py-24 px-4 bg-slate-900 text-white">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-10 reveal">
+                <p class="text-cyan-400 font-semibold text-sm uppercase tracking-widest mb-3">Reserve Your Dive</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold">Booking</h2>
+            </div>
+            <form id="booking-form" class="reveal glass-card bg-white/95 rounded-2xl p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="sm:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">이름</label>
+                    <input id="booking-name" type="text" required placeholder="홍길동" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900">
+                </div>
+                <div class="sm:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">연락처</label>
+                    <input id="booking-contact" type="text" required placeholder="이메일 또는 WhatsApp 번호" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900">
+                </div>
+                <div class="sm:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">희망 날짜</label>
+                    <input id="booking-date" type="date" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900">
+                </div>
+                <div class="sm:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">코스 선택</label>
+                    <select id="booking-course" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900">
+                        <option>Discover Scuba Diving (체험)</option>
+                        <option>Open Water (기초)</option>
+                        <option>Advanced Open Water (심화)</option>
+                        <option>Rescue Diver (심화)</option>
+                        <option>Nitrox / Deep Diver (전문)</option>
+                        <option>Divemaster / IDC (프로)</option>
+                        <option>펀 다이빙 패키지 (2~5일)</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2 flex flex-col sm:flex-row gap-3 mt-2">
+                    <button type="submit" data-channel="whatsapp" class="flex-1 py-3.5 btn-primary text-white rounded-xl font-semibold">
+                        WhatsApp으로 문의하기
+                    </button>
+                    <button type="submit" data-channel="email" class="flex-1 py-3.5 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-700 transition-colors">
+                        이메일로 문의하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 sm:py-20 px-4 bg-slate-950 text-white">
+        <div class="max-w-3xl mx-auto text-center reveal">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">Get in Touch</h2>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+                <a href="https://wa.me/6281805043888" target="_blank" rel="noopener"
+                   class="px-6 py-4 btn-primary text-white rounded-xl font-medium flex items-center justify-center gap-2 text-sm sm:text-base">
+                    💬 WhatsApp +62 818-0504-3888
+                </a>
+                <a href="mailto:letsdive@baliscuba.com"
+                   class="px-6 py-4 bg-white/10 border border-white/20 text-white rounded-xl font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base break-all sm:break-normal">
+                    📧 letsdive@baliscuba.com
+                </a>
+            </div>
+            <p class="text-slate-400 text-sm">
+                © 2026 Bali Scuba | PADI 5 Star Dive Centre &amp; CDC<br>
+                Bali, Indonesia
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // 모바일 메뉴 토글
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // 앵커 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // 스크롤 시 내비게이션 그림자
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        // 활성 내비 링크 하이라이트
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const currentId = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${currentId}`);
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => navObserver.observe(section));
+
+        // 스크롤 reveal 애니메이션
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // 히어로 배경 슬라이드쇼 (2초 간격)
+        const slides = document.querySelectorAll('.hero-slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 2000);
+
+        // 예약 문의 메시지 생성 유틸
+        const WHATSAPP_NUMBER = '6281805043888';
+        const EMAIL_ADDRESS = 'letsdive@baliscuba.com';
+
+        function openWhatsApp(message) {
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function openEmail(subject, message) {
+            window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+        }
+
+        // 히어로 예약 검색창
+        document.getElementById('hero-booking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const trip = document.getElementById('hero-trip').value;
+            const date = document.getElementById('hero-date').value || '미정';
+            const time = document.getElementById('hero-time').value;
+            const guests = document.getElementById('hero-guests').value;
+
+            const message = `안녕하세요, Bali Scuba 예약 문의드립니다.\n- Dive Trip: ${trip}\n- 날짜: ${date}\n- 시간: ${time}\n- 인원: ${guests}명`;
+            openWhatsApp(message);
+        });
+
+        // Booking 섹션 폼
+        document.getElementById('booking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('booking-name').value;
+            const contact = document.getElementById('booking-contact').value;
+            const date = document.getElementById('booking-date').value || '미정';
+            const course = document.getElementById('booking-course').value;
+            const channel = e.submitter ? e.submitter.dataset.channel : 'whatsapp';
+
+            const message = `안녕하세요, Bali Scuba 예약 문의드립니다.\n- 이름: ${name}\n- 연락처: ${contact}\n- 희망 날짜: ${date}\n- 코스: ${course}`;
+
+            if (channel === 'email') {
+                openEmail('Bali Scuba 예약 문의', message);
+            } else {
+                openWhatsApp(message);
+            }
+        });
+    </script>
+</body>
+</html>
