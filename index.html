@@ -116,10 +116,30 @@
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 9999px;
-            background: #ecfeff;
-            color: #0891b2;
             font-weight: 700;
-            border: 1px solid #a5f3fc;
+        }
+
+        .stage-card {
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .stage-connector {
+            display: none;
+        }
+
+        @media (min-width: 1024px) {
+            .stage-connector {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #a5f3fc;
+                font-size: 1.25rem;
+            }
         }
 
     </style>
@@ -342,31 +362,35 @@
                 <p class="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-3">From First Splash to Pro</p>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">Courses</h2>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <span class="stage-badge mb-4">1</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr] gap-5 lg:gap-3 items-stretch">
+                <div class="stage-card reveal bg-white rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4 bg-cyan-50 text-cyan-600 border border-cyan-100">1</span>
                     <h3 class="font-bold text-slate-900 mb-2">Discovery</h3>
                     <p class="text-sm text-slate-500 leading-relaxed">Discover Scuba Diving<br>PADI For Kids</p>
                 </div>
-                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <span class="stage-badge mb-4">2</span>
+                <div class="stage-connector">&rsaquo;</div>
+                <div class="stage-card reveal bg-white rounded-2xl p-6 border border-slate-200">
+                    <span class="stage-badge mb-4 bg-cyan-100 text-cyan-700 border border-cyan-200">2</span>
                     <h3 class="font-bold text-slate-900 mb-2">Basic</h3>
                     <p class="text-sm text-slate-500 leading-relaxed">Scuba Diver<br>Open Water</p>
                 </div>
-                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <span class="stage-badge mb-4">3</span>
+                <div class="stage-connector">&rsaquo;</div>
+                <div class="stage-card reveal bg-cyan-50/50 rounded-2xl p-6 border border-cyan-100">
+                    <span class="stage-badge mb-4 bg-cyan-200 text-cyan-800 border border-cyan-300">3</span>
                     <h3 class="font-bold text-slate-900 mb-2">Advanced</h3>
                     <p class="text-sm text-slate-500 leading-relaxed">Advanced Open Water<br>Rescue Diver</p>
                 </div>
-                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <span class="stage-badge mb-4">4</span>
+                <div class="stage-connector">&rsaquo;</div>
+                <div class="stage-card reveal bg-cyan-50 rounded-2xl p-6 border border-cyan-200 shadow-sm">
+                    <span class="stage-badge mb-4 bg-cyan-600 text-white border border-cyan-600">4</span>
                     <h3 class="font-bold text-slate-900 mb-2">Specialty</h3>
                     <p class="text-sm text-slate-500 leading-relaxed">Nitrox<br>Deep Diver</p>
                 </div>
-                <div class="reveal card-hover bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <span class="stage-badge mb-4">5</span>
-                    <h3 class="font-bold text-slate-900 mb-2">Professional</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">Divemaster<br>IDC</p>
+                <div class="stage-connector">&rsaquo;</div>
+                <div class="stage-card reveal rounded-2xl p-6 border-0 shadow-xl shadow-cyan-900/20 lg:-translate-y-2" style="background: linear-gradient(135deg, #0891b2, #0e7490 60%, #0f172a);">
+                    <span class="stage-badge mb-4 bg-white/15 text-white border border-white/30" style="backdrop-filter: blur(8px);">5</span>
+                    <h3 class="font-bold text-white mb-2">Professional</h3>
+                    <p class="text-sm text-cyan-50/90 leading-relaxed">Divemaster<br>IDC</p>
                 </div>
             </div>
         </div>
