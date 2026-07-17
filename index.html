@@ -641,6 +641,21 @@
             const email = document.getElementById('hero-email').value || '-';
 
             const message = `Hello, I'd like to inquire about a booking with Bali Scuba.\n- Dive Trip: ${trip}\n- Date: ${date}\n- Time: ${time}\n- Guests: ${guests}\n- Name: ${name}\n- Phone: ${phone}\n- Email: ${email}`;
+
+            // Firestore 저장 (실패해도 아래 WhatsApp 흐름을 절대 막지 않음 — 내부 try/catch로 흡수)
+            window.saveBookingToFirestore && window.saveBookingToFirestore({
+                source: 'hero',
+                name,
+                channel: 'whatsapp',
+                message,
+                trip,
+                phone,
+                email,
+                time,
+                guests,
+                date,
+            });
+
             openWhatsApp(message);
         });
 
@@ -655,12 +670,92 @@
 
             const message = `Hello, I'd like to inquire about a booking with Bali Scuba.\n- Name: ${name}\n- Contact: ${contact}\n- Preferred Date: ${date}\n- Course: ${course}`;
 
+            // Firestore 저장 (실패해도 아래 WhatsApp/이메일 흐름을 절대 막지 않음 — 내부 try/catch로 흡수)
+            window.saveBookingToFirestore && window.saveBookingToFirestore({
+                source: 'booking_section',
+                name,
+                channel,
+                message,
+                contact,
+                course,
+                date,
+            });
+
             if (channel === 'email') {
                 openEmail('Bali Scuba Booking Inquiry', message);
             } else {
                 openWhatsApp(message);
             }
         });
+    </script>
+
+    <!-- Firebase Firestore 예약 저장 (기존 WhatsApp/이메일 로직과 완전히 분리된 모듈) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            serverTimestamp,
+        } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLaqesPTF7FdM5z1qBa7rymAZr0EMucV8",
+            authDomain: "diving-booking-b69f7.firebaseapp.com",
+            projectId: "diving-booking-b69f7",
+            storageBucket: "diving-booking-b69f7.firebasestorage.app",
+            messagingSenderId: "423210595527",
+            appId: "1:423210595527:web:429a5883d28eb51b25bae2",
+        };
+
+        // Firebase 초기화도 실패할 수 있으므로(placeholder config) 전체를 try/catch로 감쌈
+        let db = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+        } catch (err) {
+            console.error('[Firestore] 초기화 실패 (예약 저장 비활성화, 나머지 기능은 정상):', err);
+        }
+
+        // 빈 문자열/undefined 필드는 제외하고 선택 필드만 담아 반환
+        function pickOptional(data, keys) {
+            const out = {};
+            keys.forEach((key) => {
+                const value = data[key];
+                if (value !== undefined && value !== null && String(value).trim() !== '') {
+                    out[key] = value;
+                }
+            });
+            return out;
+        }
+
+        // 예약 문서 저장 헬퍼 — 절대 throw 하지 않음(내부 try/catch), 실패 시 console.error 만 남김
+        window.saveBookingToFirestore = async function saveBookingToFirestore(data) {
+            try {
+                if (!db) return; // 초기화 실패 시 조용히 무시
+
+                // 보안 규칙과 일치하는 필수 필드 (status는 항상 'pending', createdAt은 서버 타임스탬프 강제)
+                const doc = {
+                    source: data.source,       // 'hero' | 'booking_section'
+                    status: 'pending',
+                    name: data.name || '',
+                    channel: data.channel,     // 'whatsapp' | 'email'
+                    message: data.message || '',
+                    createdAt: serverTimestamp(),
+                };
+
+                // 폼별 선택 필드 (값이 있을 때만 포함)
+                if (data.source === 'hero') {
+                    Object.assign(doc, pickOptional(data, ['trip', 'phone', 'email', 'time', 'guests', 'date']));
+                } else if (data.source === 'booking_section') {
+                    Object.assign(doc, pickOptional(data, ['contact', 'course', 'date']));
+                }
+
+                await addDoc(collection(db, 'bookings'), doc);
+            } catch (err) {
+                console.error('[Firestore] 예약 저장 실패 (WhatsApp/이메일 흐름에는 영향 없음):', err);
+            }
+        };
     </script>
 </body>
 </html>
