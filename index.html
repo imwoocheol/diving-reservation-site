@@ -837,17 +837,19 @@
             overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4';
 
             // mediaType 이 'video' 면 자동재생/음소거/반복 비디오, 아니면(기존 데이터 포함) 이미지
+            // w-full/object-contain 대신 max-w-full + max-h로만 제한해서 이미지 자체 비율 그대로,
+            // 여백(레터박싱) 없이 표시 — 카드 폭에 억지로 맞추지 않음
             let imageHtml = '';
             if (data.imageUrl) {
                 if (data.mediaType === 'video') {
-                    imageHtml = `<video src="${escapePopupHtml(data.imageUrl)}" autoplay muted loop playsinline class="w-full max-h-72 object-contain bg-slate-50 rounded-xl mb-4"></video>`;
+                    imageHtml = `<video src="${escapePopupHtml(data.imageUrl)}" autoplay muted loop playsinline class="block max-w-full max-h-[65vh] mx-auto rounded-xl mb-4"></video>`;
                 } else {
-                    imageHtml = `<img src="${escapePopupHtml(data.imageUrl)}" alt="${escapePopupHtml(data.title || 'Promotion')}" class="w-full max-h-72 object-contain bg-slate-50 rounded-xl mb-4">`;
+                    imageHtml = `<img src="${escapePopupHtml(data.imageUrl)}" alt="${escapePopupHtml(data.title || 'Promotion')}" class="block max-w-full max-h-[65vh] mx-auto rounded-xl mb-4">`;
                 }
             }
 
             overlay.innerHTML = `
-                <div class="glass-card rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative">
+                <div class="glass-card rounded-2xl shadow-2xl w-full max-w-lg p-6 sm:p-8 relative">
                     <button type="button" data-popup-close class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
                     ${imageHtml}
                     <h3 class="text-xl font-extrabold text-slate-900 mb-2 pr-6">${escapePopupHtml(data.title || '')}</h3>
