@@ -721,6 +721,8 @@
             collection,
             addDoc,
             serverTimestamp,
+            doc,
+            getDoc,
         } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -759,7 +761,8 @@
                 if (!db) return; // 초기화 실패 시 조용히 무시
 
                 // 보안 규칙과 일치하는 필수 필드 (status는 항상 'pending', createdAt은 서버 타임스탬프 강제)
-                const doc = {
+                // 변수명은 firestore 의 doc() 임포트와 겹치지 않도록 docData 사용
+                const docData = {
                     source: data.source,       // 'hero' | 'booking_section'
                     status: 'pending',
                     name: data.name || '',
@@ -770,16 +773,92 @@
 
                 // 폼별 선택 필드 (값이 있을 때만 포함)
                 if (data.source === 'hero') {
-                    Object.assign(doc, pickOptional(data, ['trip', 'phone', 'email', 'time', 'guests', 'date']));
+                    Object.assign(docData, pickOptional(data, ['trip', 'phone', 'email', 'time', 'guests', 'date']));
                 } else if (data.source === 'booking_section') {
-                    Object.assign(doc, pickOptional(data, ['contact', 'course', 'date']));
+                    Object.assign(docData, pickOptional(data, ['contact', 'course', 'date']));
                 }
 
-                await addDoc(collection(db, 'bookings'), doc);
+                await addDoc(collection(db, 'bookings'), docData);
             } catch (err) {
                 console.error('[Firestore] 예약 저장 실패 (WhatsApp/이메일 흐름에는 영향 없음):', err);
             }
         };
+
+        // ---- 프로모션 팝업 배너 -------------------------------------------------
+        // 어드민(siteConfig/popup)에서 설정한 팝업을, enabled 이고 오늘이 기간 내이면 표시.
+        // 전체를 try/catch 로 감싸 실패해도 사이트 나머지 기능에는 영향 없음(throw 금지).
+
+        // HTML 이스케이프 — 어드민이 입력한 팝업 텍스트를 안전하게 innerHTML에 꽂기 위함
+        function escapePopupHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // 오늘 날짜를 YYYY-MM-DD 문자열로 반환 (로컬 타임존 기준)
+        function todayStr() {
+            const d = new Date();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${d.getFullYear()}-${mm}-${dd}`;
+        }
+
+        // 오늘이 startDate ~ endDate 범위 안인지 (YYYY-MM-DD 문자열 비교)
+        // 시작/종료일이 비어 있으면 해당 방향 제한 없음으로 간주
+        function isWithinRange(startDate, endDate) {
+            const today = todayStr();
+            if (startDate && today < startDate) return false;
+            if (endDate && today > endDate) return false;
+            return true;
+        }
+
+        // 팝업 모달을 동적으로 생성해 body 에 삽입
+        function showPopupBanner(data) {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4';
+
+            const imageHtml = data.imageUrl
+                ? `<img src="${escapePopupHtml(data.imageUrl)}" alt="${escapePopupHtml(data.title || 'Promotion')}" class="w-full max-h-56 object-cover rounded-xl mb-4">`
+                : '';
+
+            overlay.innerHTML = `
+                <div class="glass-card rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative">
+                    <button type="button" data-popup-close class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
+                    ${imageHtml}
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-2 pr-6">${escapePopupHtml(data.title || '')}</h3>
+                    <p class="text-sm text-slate-600 whitespace-pre-wrap">${escapePopupHtml(data.message || '')}</p>
+                </div>`;
+
+            // 닫기: X 버튼 또는 배경 클릭 시 이 인스턴스만 제거 (영구 저장 없음)
+            function closePopup() {
+                overlay.remove();
+            }
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay || e.target.hasAttribute('data-popup-close')) {
+                    closePopup();
+                }
+            });
+
+            document.body.appendChild(overlay);
+        }
+
+        async function initPopupBanner() {
+            try {
+                if (!db) return; // 초기화 실패 시 조용히 무시
+                const snap = await getDoc(doc(db, 'siteConfig', 'popup'));
+                if (!snap.exists()) return;
+                const data = snap.data();
+                if (data.enabled !== true) return;
+                if (!isWithinRange(data.startDate, data.endDate)) return;
+                showPopupBanner(data);
+            } catch (err) {
+                console.error('[Firestore] 팝업 배너 로드 실패 (사이트 나머지 기능에는 영향 없음):', err);
+            }
+        }
+
+        initPopupBanner();
     </script>
 </body>
 </html>
