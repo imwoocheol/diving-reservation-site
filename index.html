@@ -814,14 +814,37 @@
             return true;
         }
 
+        // "오늘 다시보지 않음" 여부 — localStorage 접근 실패(사파리 프라이빗 모드 등)해도 조용히 무시
+        function isDismissedToday() {
+            try {
+                return localStorage.getItem('popupHiddenUntil') === todayStr();
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function dismissForToday() {
+            try {
+                localStorage.setItem('popupHiddenUntil', todayStr());
+            } catch (err) {
+                // 저장 실패해도 이번 팝업만 닫히면 되므로 무시
+            }
+        }
+
         // 팝업 모달을 동적으로 생성해 body 에 삽입
         function showPopupBanner(data) {
             const overlay = document.createElement('div');
             overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4';
 
-            const imageHtml = data.imageUrl
-                ? `<img src="${escapePopupHtml(data.imageUrl)}" alt="${escapePopupHtml(data.title || 'Promotion')}" class="w-full max-h-56 object-cover rounded-xl mb-4">`
-                : '';
+            // mediaType 이 'video' 면 자동재생/음소거/반복 비디오, 아니면(기존 데이터 포함) 이미지
+            let imageHtml = '';
+            if (data.imageUrl) {
+                if (data.mediaType === 'video') {
+                    imageHtml = `<video src="${escapePopupHtml(data.imageUrl)}" autoplay muted loop playsinline class="w-full max-h-72 object-contain bg-slate-50 rounded-xl mb-4"></video>`;
+                } else {
+                    imageHtml = `<img src="${escapePopupHtml(data.imageUrl)}" alt="${escapePopupHtml(data.title || 'Promotion')}" class="w-full max-h-72 object-contain bg-slate-50 rounded-xl mb-4">`;
+                }
+            }
 
             overlay.innerHTML = `
                 <div class="glass-card rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative">
@@ -829,13 +852,23 @@
                     ${imageHtml}
                     <h3 class="text-xl font-extrabold text-slate-900 mb-2 pr-6">${escapePopupHtml(data.title || '')}</h3>
                     <p class="text-sm text-slate-600 whitespace-pre-wrap">${escapePopupHtml(data.message || '')}</p>
+                    <div class="mt-5 flex items-center justify-between gap-3">
+                        <button type="button" data-popup-dismiss-today class="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2">Don't show again today</button>
+                        <button type="button" data-popup-close class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Cancel</button>
+                    </div>
                 </div>`;
 
-            // 닫기: X 버튼 또는 배경 클릭 시 이 인스턴스만 제거 (영구 저장 없음)
+            // 닫기: X/Cancel 버튼 또는 배경 클릭 시 이 인스턴스만 제거 (영구 저장 없음)
+            // "Don't show again today"는 localStorage에 오늘 날짜를 기록해 실제로 하루 동안 재노출 안 되게 함
             function closePopup() {
                 overlay.remove();
             }
             overlay.addEventListener('click', (e) => {
+                if (e.target.hasAttribute('data-popup-dismiss-today')) {
+                    dismissForToday();
+                    closePopup();
+                    return;
+                }
                 if (e.target === overlay || e.target.hasAttribute('data-popup-close')) {
                     closePopup();
                 }
@@ -847,6 +880,7 @@
         async function initPopupBanner() {
             try {
                 if (!db) return; // 초기화 실패 시 조용히 무시
+                if (isDismissedToday()) return; // "오늘 다시보지 않음" 선택했으면 조회 자체를 스킵
                 const snap = await getDoc(doc(db, 'siteConfig', 'popup'));
                 if (!snap.exists()) return;
                 const data = snap.data();
